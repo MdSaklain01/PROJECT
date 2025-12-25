@@ -1,0 +1,45 @@
+name: HTML Website Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+      - "website/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init & Apply
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+
+      - name: Get EC2 Public IP
+        id: get_ip
+        run: |
+          echo "EC2_IP=$(cd terraform && terraform output -raw instance_public_ip)" >> $GITHUB_ENV
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $EC2_IP >> ~/.ssh/known_hosts
+
+      - name: Copy website files to EC2
+        run: |
+          rsync -avz website/ ubuntu@$EC2_IP:/var/www/html/
+
