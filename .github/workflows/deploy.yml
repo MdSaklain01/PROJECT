@@ -63,8 +63,15 @@ jobs:
      #       ssh-keyscan -H $EC2_IP >> ~/.ssh/known_hosts
      #       ssh-keyscan -H /${{ env.EC2_IP }} >> ~/.ssh/known_hosts
 
-      - name: Copy website files to EC2
+      # - name: Copy website files to EC2
+      #   run: |
+      #     # rsync -avz website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
+      #     rsync -avz -e "ssh -o StrictHostKeyChecking=no" website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
+      - name: Copy website to EC2
         run: |
-          # rsync -avz website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
+          rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" website/ ubuntu@${{ env.EC2_IP }}:/tmp/website
+
+      - name: Deploy website to nginx folder
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ env.EC2_IP }} "sudo rm -rf /var/www/html/* && sudo mv /tmp/website/* /var/www/html/"
 
