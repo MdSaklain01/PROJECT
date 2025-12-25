@@ -37,17 +37,17 @@ jobs:
     #     run: |
     #       echo "EC2_IP=$(cd terraform && terraform output -raw public_ip)" >> $GITHUB_ENV
 
-    #   - name: Get EC2 Public IP
-    #     id: ec2ip
-    #     working-directory: ./terraform
-    #     run: echo "EC2_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
-
       - name: Get EC2 Public IP
-        run: |
-          cd terraform
-          # Capture only the last line (IP), remove newlines and any extra characters
-          EC2_IP=$(terraform output -raw public_ip | tail -n 1 | tr -d '\n')
-          echo "EC2_IP=$EC2_IP" >> $GITHUB_ENV
+        id: ec2ip
+        working-directory: ./terraform
+        run: echo "EC2_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
+
+    #   - name: Get EC2 Public IP
+    #     run: |
+    #       cd terraform
+    #       # Capture only the last line (IP), remove newlines and any extra characters
+    #       EC2_IP=$(terraform output -raw public_ip | tail -n 1 | tr -d '\n')
+    #       echo "EC2_IP=$EC2_IP" >> $GITHUB_ENV
 
 
       - name: wait for ec2 to be ready for ssh    
