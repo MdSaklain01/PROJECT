@@ -65,5 +65,5 @@ jobs:
 
       - name: Copy website files to EC2
         run: |
-          rsync -avz website/ ubuntu@$EC2_IP:/var/www/html/
+          rsync -avz website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
 
