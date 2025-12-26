@@ -1,0 +1,21 @@
+body {
+    text-align: center;
+}
+button {
+    width: 120px;
+    height: 30px;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-weight: bolder;
+    margin-top: 10px;
+}
+
+#rmv-btn {
+    background-color: red;
+    color: whitesmoke;
+}
+
+#undo-btn {
+    background-color: greenyellow;
+    color: black;
+}
