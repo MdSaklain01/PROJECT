@@ -42,25 +42,15 @@ jobs:
         working-directory: ./terraform
         run: echo "EC2_IP=$(terraform output -raw public_ip)" >> $GITHUB_ENV
 
-  
-
       - name: wait for ec2 to be ready for ssh    
         run: sleep 40
-
-
 
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-     #       ssh-keyscan -H $EC2_IP >> ~/.ssh/known_hosts
-     #       ssh-keyscan -H /${{ env.EC2_IP }} >> ~/.ssh/known_hosts
-
-      # - name: Copy website files to EC2
-      #   run: |
-      #     # rsync -avz website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
-      #     rsync -avz -e "ssh -o StrictHostKeyChecking=no" website/ ubuntu@${{ env.EC2_IP }}:/var/www/html/
+          
       - name: Copy website to EC2
         run: |
           rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" website/ ubuntu@${{ env.EC2_IP }}:/tmp/website
